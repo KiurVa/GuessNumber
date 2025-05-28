@@ -29,15 +29,18 @@ public class Controller {
                     Stopwatch stopwatch = new Stopwatch(); //Loome stopperi
                     stopwatch.start(); //Käivitame stopperi
                     //System.out.println(model.getPc_number());
-                    view.showMessage(String.valueOf(model.getPc_number())); //Näitab arvuti valitud numbrit
+                    //view.showMessage(String.valueOf(model.getPc_number())); //Näitab arvuti valitud numbrit
                     while (!model.isGame_over()) { //Kui mäng pole läbi
                         int quess = view.askGuess(); //Küsib kasutajalt numbrit
                         view.showMessage(model.checkGuess(quess)); //kontroll ja väljasta tulemus
                     }
                     stopwatch.stop(); //peatab stopperi
-                    view.showMessage("Mängu aeg: " + stopwatch.getElapsedTime() + " (" +stopwatch.getElapsedMillis() + ")");
-                    String name = view.askName(); //Küsib nime
-                    model.saveScore(name);
+                    long gameTimeMillis = stopwatch.getElapsedMillis(); //Teeb muutuja millisekundite jaoks
+                    view.showMessage("Mängu aeg: " + stopwatch.getElapsedTime() + " (" +gameTimeMillis + ")");
+                    if (!model.isCheater()) {           //Kui ei ole petja rakendub if
+                        String name = view.askName();   //Küsib nime
+                        model.saveScore(name, gameTimeMillis); //Salvestab nime ja mängu aja millisekundites
+                    }
                     break;
                 case 2:
                     view.showScoreboard(model.loadScores()); //Näitab edetabelit ja saab kaasa listi
