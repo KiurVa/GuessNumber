@@ -6,7 +6,6 @@ import java.util.Scanner;
  */
 public class View {
     private final Scanner scanner = new Scanner(System.in);
-    private final int MAX_ATTEMPTS = 5;
 
     /**
      * Mängu menüü näitamine
@@ -35,30 +34,12 @@ public class View {
     }
 
     /**
-     * küsib kasutajalt numbrit ja kontrollib, et see oleks täisarv ja vahemikus 1-100
-     * peab arvestust, mitu mitte täisarvulist sisestust on tehtud
-     * @param cheatCode petmise number
-     * @return number
+     * küsib kasutajalt numbrit
+     * @return sisestus
      */
-    public int askGuess(int cheatCode) {
-        int attempts = 0;
-        while (attempts < MAX_ATTEMPTS) {
-            System.out.print("Sisesta number vahemikus 1-100: ");
-            try {
-                int guess = Integer.parseInt(scanner.nextLine());
-                if ((guess >= 1 && guess <= 100) || guess == cheatCode) {
-                    return guess;
-                } else {
-                    System.out.println("Arv peab olemas vahemikus 1-100.");
-                }
-            } catch (NumberFormatException e) {
-                System.out.println("Sisestus peab olema täisarv.");
-            }
-            attempts++;
-            System.out.println("Jäänud katseid: " + (MAX_ATTEMPTS - attempts));
-        }
-        System.out.println("Liiga palju vigaseid sisestusi. Mäng on katkestatud.");
-        return -1; //Tagastab -1, et mäng katkestada
+    public String askGuess() {
+        System.out.println("Sisesta number 1-100: ");
+        return scanner.nextLine();
     }
 
     /**
@@ -81,5 +62,9 @@ public class View {
             System.out.println(sc.formattedData());
         }
         System.out.println(); //Tühi rida
+    }
+
+    public void showRemainingAttempts(int remainingAttempts) {
+        System.out.println("Jäänud katseid: " + remainingAttempts);
     }
 }

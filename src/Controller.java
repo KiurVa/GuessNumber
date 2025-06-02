@@ -4,6 +4,7 @@
 public class Controller {
     private final Model model;
     private final View view;
+    private final int MAX_ATTEMPTS = 5;
 
     /**
      * Kontrolleri konstruktor
@@ -26,28 +27,7 @@ public class Controller {
             int choice = view.getMenuChoice();
             switch (choice) {
                 case 1:
-                    model.initGame(); //Loob uue mängu
-                    Stopwatch stopwatch = new Stopwatch(); //Loome stopperi
-                    stopwatch.start(); //Käivitame stopperi
-                    boolean gameAborted = false;
-                    //System.out.println(model.getPc_number());
-                    //view.showMessage(String.valueOf(model.getPc_number())); //Näitab arvuti valitud numbrit
-                    while (!model.isGame_over()) { //Kui mäng pole läbi
-                        int quess = view.askGuess(model.getCheatCode()); //Küsib kasutajalt numbrit ja saab kaasa petmise numbri
-                        if (quess == -1) { //Kui tagastati -1 vigaste sisestuste tõttu
-                            gameAborted = true;
-                            break;
-                        } else {
-                            view.showMessage(model.checkGuess(quess)); //kontroll ja väljasta tulemus
-                        }
-                    }
-                    stopwatch.stop(); //peatab stopperi
-                    long gameTimeMillis = stopwatch.getElapsedMillis(); //Teeb muutuja millisekundite jaoks
-                    view.showMessage("Mängu aeg: " + stopwatch.getElapsedTime() + " (" + gameTimeMillis + ")");
-                    if (!model.isCheater() && !gameAborted) {           //Kui ei ole petja ja mäng pole katkestatud rakendub if
-                        String name = view.askName();   //Küsib nime
-                        model.saveScore(name, gameTimeMillis); //Salvestab nime ja mängu aja millisekundites
-                    }
+                    playGame(); //mängu loomine ja käivitamine
                     break;
                 case 2:
                     view.showScoreboard(model.loadScores()); //Näitab edetabelit ja saab kaasa listi
@@ -60,5 +40,71 @@ public class Controller {
                     view.showMessage("Vigane valik.");
             }
         }
+    }
+
+    /**
+     * Mängu loogika
+     */
+    private void playGame() {
+        model.initGame(); //Loome mängu
+        Stopwatch stopwatch = new Stopwatch(); //Loome stopperi
+        stopwatch.start(); //Käivitame stopperi
+        boolean gameAborted = false; //mängu katkestamise muutuja
+        //System.out.println(model.getPc_number());
+        //view.showMessage(String.valueOf(model.getPc_number())); //Näitab arvuti valitud numbrit
+        while (!model.isGame_over()) { //Kui mäng pole läbi
+            int quess = getValidGuess();
+            if (quess == -1) { //Kui tagastati -1 vigaste sisestuste tõttu
+                gameAborted = true;
+                break;
+            } else {
+                view.showMessage(model.checkGuess(quess)); //kontroll ja väljasta tulemus
+            }
+        }
+        stopwatch.stop(); //peatab stopperi
+        long gameTimeMillis = stopwatch.getElapsedMillis(); //Teeb muutuja millisekundite jaoks
+        view.showMessage("Mängu aeg: " + stopwatch.getElapsedTime() + " (" + gameTimeMillis + ")");
+        if (!model.isCheater() && !gameAborted) {           //Kui ei ole petja ja mäng pole katkestatud rakendub if
+            String name = view.askName();   //Küsib nime
+            model.saveScore(name, gameTimeMillis); //Salvestab nime ja mängu aja millisekundites
+        }
+    }
+
+    /**
+     * Sisestuse kontroll, et oleks vahemikus 1-100 ja oleks täisarv
+     * peab arvestust valesti sisestuste üle
+     * @return sobiv täisarv või -1 kui mäng katkestati
+     */
+    private int getValidGuess() {
+        int attempts = 0;
+        while (attempts < MAX_ATTEMPTS) {
+            try {
+                String input = view.askGuess();
+                int guess = Integer.parseInt(input);
+
+                if (isValidGuess(guess)) {
+                    return guess;
+                } else {
+                    view.showMessage("Arv peab olema vahemikus 1-100.");
+                }
+            } catch (NumberFormatException e) {
+                view.showMessage("Sisestus peab olema täisarv.");
+            }
+            attempts++;
+            if (attempts < MAX_ATTEMPTS) {
+                view.showRemainingAttempts(MAX_ATTEMPTS - attempts);
+            }
+        }
+        view.showMessage("Liiga palju vigaseid sisestusi. Mäng on katkestatud.");
+        return -1;
+    }
+
+    /**
+     * Konntrollib, kas arvamine on õiges vahemikus või 1000
+     * @param guess kasutaja sisestus
+     * @return true kui õige ja false kui mitte
+     */
+    private boolean isValidGuess(int guess) {
+        return (guess >= 1 && guess <= 100) || guess == model.getCheatCode();
     }
 }
