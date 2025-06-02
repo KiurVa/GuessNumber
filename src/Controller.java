@@ -24,20 +24,24 @@ public class Controller {
         boolean running = true;
         while (running) {
             view.showMenu();
-            int choice = view.getMenuChoice();
-            switch (choice) {
-                case 1:
-                    playGame(); //mängu loomine ja käivitamine
-                    break;
-                case 2:
-                    view.showScoreboard(model.loadScores()); //Näitab edetabelit ja saab kaasa listi
-                    break;
-                case 3:
-                    running = false;
-                    view.showMessage("Head aega!");
-                    break;
-                default:
-                    view.showMessage("Vigane valik.");
+            try {
+                int choice = Integer.parseInt(view.getMenuChoice());
+                switch (choice) {
+                    case 1:
+                        playGame(); //mängu loomine ja käivitamine
+                        break;
+                    case 2:
+                        view.showScoreboard(model.loadScores()); //Näitab edetabelit ja saab kaasa listi
+                        break;
+                    case 3:
+                        running = false;
+                        view.showMessage("Head aega!");
+                        break;
+                    default:
+                        view.showMessage("Vigane valik. Sisesta 1, 2 või 3.");
+                }
+            } catch (NumberFormatException e) {
+                view.showMessage("Vigane sisestus. Sisesta number 1, 2 või 3.");
             }
         }
     }

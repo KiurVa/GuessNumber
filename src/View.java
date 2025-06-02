@@ -21,8 +21,8 @@ public class View {
      * Tagastab kasutaja menüüs tehtud sisestuse
      * @return kasutaja sisestus
      */
-    public int getMenuChoice () {
-        return Integer.parseInt(scanner.nextLine());
+    public String getMenuChoice () {
+        return scanner.nextLine();
     }
 
     /**
