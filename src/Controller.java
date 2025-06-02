@@ -83,9 +83,7 @@ public class Controller {
         int attempts = 0;
         while (attempts < MAX_ATTEMPTS) {
             try {
-                String input = view.askGuess();
-                int guess = Integer.parseInt(input);
-
+                int guess = Integer.parseInt(view.askGuess());
                 if (isValidGuess(guess)) {
                     return guess;
                 } else {
