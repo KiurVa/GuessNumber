@@ -7,8 +7,9 @@ public class Controller {
 
     /**
      * Kontrolleri konstruktor
+     *
      * @param model App failis loodud mudel
-     * @param view App failis loodud view
+     * @param view  App failis loodud view
      */
     public Controller(Model model, View view) {
         this.model = model;
@@ -28,16 +29,22 @@ public class Controller {
                     model.initGame(); //Loob uue mängu
                     Stopwatch stopwatch = new Stopwatch(); //Loome stopperi
                     stopwatch.start(); //Käivitame stopperi
+                    boolean gameAborted = false;
                     //System.out.println(model.getPc_number());
                     //view.showMessage(String.valueOf(model.getPc_number())); //Näitab arvuti valitud numbrit
                     while (!model.isGame_over()) { //Kui mäng pole läbi
-                        int quess = view.askGuess(); //Küsib kasutajalt numbrit
-                        view.showMessage(model.checkGuess(quess)); //kontroll ja väljasta tulemus
+                        int quess = view.askGuess(model.getCheatCode()); //Küsib kasutajalt numbrit ja saab kaasa petmise numbri
+                        if (quess == -1) { //Kui tagastati -1 vigaste sisestuste tõttu
+                            gameAborted = true;
+                            break;
+                        } else {
+                            view.showMessage(model.checkGuess(quess)); //kontroll ja väljasta tulemus
+                        }
                     }
                     stopwatch.stop(); //peatab stopperi
                     long gameTimeMillis = stopwatch.getElapsedMillis(); //Teeb muutuja millisekundite jaoks
-                    view.showMessage("Mängu aeg: " + stopwatch.getElapsedTime() + " (" +gameTimeMillis + ")");
-                    if (!model.isCheater()) {           //Kui ei ole petja rakendub if
+                    view.showMessage("Mängu aeg: " + stopwatch.getElapsedTime() + " (" + gameTimeMillis + ")");
+                    if (!model.isCheater() && !gameAborted) {           //Kui ei ole petja ja mäng pole katkestatud rakendub if
                         String name = view.askName();   //Küsib nime
                         model.saveScore(name, gameTimeMillis); //Salvestab nime ja mängu aja millisekundites
                     }

@@ -35,17 +35,16 @@ public class Model {
      */
     public String checkGuess (int guess) {
         steps++; //Sammude arv kasvab
-        if (guess == pc_number) {
+        if (guess == CHEAT_CODE) {
+            game_over = true;
+            cheater = true;
+            return "Leidsid mu nõrga koha. Õige number on " + pc_number + ". Edetabelisse sind ei lisata.";
+        }else if (guess == pc_number) {
             game_over = true;
             return "Sa võitsid " + steps + " sammuga!";
         } else if (guess < pc_number) {
             return "Liiga väike";
-        } else if (guess == CHEAT_CODE) {
-            game_over = true;
-            cheater = true;
-            return "Leidsid mu nõrga koha. Õige number on " + pc_number + ". Edetabelisse sind ei lisata.";
-        }
-        else {
+        } else {
             return "Liiga suur";
         }
     }
@@ -110,5 +109,13 @@ public class Model {
      */
     public boolean isCheater() {
         return cheater;
+    }
+
+    /**
+     * Petja number
+     * @return number
+     */
+    public int getCheatCode() {
+        return CHEAT_CODE;
     }
 }
