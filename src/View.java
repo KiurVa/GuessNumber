@@ -14,7 +14,7 @@ public class View {
         System.out.println("1. Mängima");
         System.out.println("2. Edetabel");
         System.out.println("3. Välju");
-        System.out.print("4. Tee valik: ");
+        System.out.print("Tee valik: ");
     }
 
     /**
